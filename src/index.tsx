@@ -7,7 +7,7 @@ import{
   createBrowserRouter,
   RouterProvider
 } from 'react-router-dom'
-import Principal from './Components/Principal';
+import Principal from './Components/Principal/Principal';
 import ErrorPage from './Components/Error';
 
 

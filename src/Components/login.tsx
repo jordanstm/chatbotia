@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import {Card,Form,InputGroup,Button} from 'react-bootstrap'
 
 import Realizalogin from './Js/Login'; 
 import { useNavigate } from 'react-router-dom';
+import swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 function Login(){
    
@@ -12,26 +14,53 @@ function Login(){
 
     const handleUsuario = (event:any)=>{ Setusuario(event.target.value) }
     const handleSenha = (event:any)=>{Setsenha(event.target.value)}
+    const [showPass,setShowpass] = useState(false);
+
+    const [validated, setValidated] = useState(false);
+
+    function clickHandler(){
+      setShowpass(true);
+    }
+
+    function Menssagens(Messagem:string){
+      const MySwal = withReactContent(swal);
+      MySwal.fire({
+          title:'Erro!',
+          text:Messagem,
+          icon:'error',
+          confirmButtonText:'OK'});
+    }
+
 
     const Logar=()=>{
        let logins ={ Usuario: usuario.trim() , Senha: senha.trim()} // Primeira forma  de resolver melhor forma
       
    
 
-       //Segunda forma de resulver o problema de inferencia de valor nas propriedades dos Obejetos 
-      // interface log  {usuario:String,senha:String };
-       
-      // var l: log;
-      // l ={ usuario : usuario,senha:senha} ;
       
-     //console.log("o Usuario é "+logins.Usuario+" e a Senha "+logins.Senha );
      let resultado = Realizalogin( logins);
        
        if(resultado){
          navigate("/Principal");
        }
+       else{
+        Menssagens("'Usuario' ou 'Senha' inválido!");
+       }
     }
-    return (<Card>
+
+    const handleSubmit = (event:any) => {
+      const form = event.currentTarget;
+      if (form.checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+  
+      setValidated(true);
+    };
+  
+    return (
+       <Form noValidate validated={validated} onSubmit={handleSubmit}>
+       <Card>
           <Card.Header>
             <p>Login</p>
           </Card.Header>
@@ -56,15 +85,22 @@ function Login(){
           placeholder="Senha"
           aria-label="Username"
           aria-describedby="basic-addon1"
-        
+          autoComplete='true'
           onChange={(e)=>{handleSenha(e)}}
          
         /> 
+              
+    <InputGroup.Text>
+        <i onClick={clickHandler} className={showPass ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+    </InputGroup.Text>
+
+
       </InputGroup>
-      <Button variant="secondary" className="mb-6" onClick={()=>{Logar()}}> Login</Button>
+      <Button variant="success" className="mb-6" onClick={()=>{Logar()}}> Login</Button>
       <div className='cad'>Ainda não tem Cadastro clique <a href='/Cadastro'><strong>Aqui</strong></a></div>
           </Card.Body>
     </Card>
+    </Form>
     )
 }
 
